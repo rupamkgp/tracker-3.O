@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import { initialSubjects, weeklyTimetable, defaultTasks, initialSubjectCategories } from '../utils/initialData';
 import { useAuth } from './AuthContext';
 
@@ -17,7 +18,7 @@ export const AppProvider = ({ children }) => {
       options.headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(body);
     }
-    const res = await fetch(`/api${endpoint}`, options);
+    const res = await fetch(`${API_BASE_URL}/api${endpoint}`, options);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'API Error');
     return data;

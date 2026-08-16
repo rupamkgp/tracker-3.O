@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL, isCapacitor } from '../config';
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -11,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   const neonAuthUrl = import.meta.env.VITE_NEON_AUTH_BASE_URL || 'https://ep-quiet-shadow-axfnflw6.neonauth.c-4.us-east-2.aws.neon.tech/neondb/auth';
   // Use relative path '/auth' only for local dev proxy, otherwise use absolute URL to bypass Vercel proxy host header issues
-  const authBaseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+  const authBaseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' && !isCapacitor
     ? '/auth' 
     : neonAuthUrl;
 
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
           setUser(data.user);
           
           // Sync profile to our backend (Our backend uses the JWT token)
-          const syncRes = await fetch('/api/profiles/sync', {
+          const syncRes = await fetch(`${API_BASE_URL}/api/profiles/sync`, {
             method: 'POST',
             headers: { 
               'Authorization': `Bearer ${token}`,

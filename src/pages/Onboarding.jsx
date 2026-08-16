@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { ChevronRight, ChevronLeft, Plus, Trash2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 
 const interestsList = ['Study', 'Career', 'Fitness', 'Habits', 'Personal Goals', 'Projects', 'Finances', 'Reading', 'Productivity', 'Other'];
@@ -58,7 +59,7 @@ const Onboarding = ({ onComplete }) => {
         notifications
       };
 
-      await fetch('/api/profiles/onboarding', {
+      await fetch(`${API_BASE_URL}/api/profiles/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ const Onboarding = ({ onComplete }) => {
 
       // 2. Submit goals
       for (const goal of goals) {
-        await fetch('/api/goals', {
+        await fetch(`${API_BASE_URL}/api/goals`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
