@@ -23,6 +23,10 @@ export const AuthProvider = ({ children }) => {
           // The browser will now send the better-auth.session_token cookie automatically
         });
         if (res.ok) {
+          const contentType = res.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Server returned an invalid response (not JSON). Check your proxy or Netlify deployment.");
+          }
           const data = await res.json();
           setUser(data.user);
           
@@ -63,6 +67,13 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ email, password })
     });
     
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await res.text();
+      console.error("Non-JSON response:", text);
+      throw new Error('Server returned an invalid response. Your Netlify proxy rules might not be deployed yet.');
+    }
+    
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
     
@@ -77,6 +88,13 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ email, password, name })
     });
     
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await res.text();
+      console.error("Non-JSON response:", text);
+      throw new Error('Server returned an invalid response. Your Netlify proxy rules might not be deployed yet.');
+    }
+
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Signup failed');
     
