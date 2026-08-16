@@ -9,7 +9,11 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(!localStorage.getItem('tracker_token'));
   const [onboardingCompleted, setOnboardingCompleted] = useState(localStorage.getItem('onboardingCompleted') === 'true');
 
-  const authBaseUrl = typeof window !== 'undefined' ? `${window.location.origin}/auth` : '/auth';
+  const neonAuthUrl = import.meta.env.VITE_NEON_AUTH_BASE_URL || 'https://ep-quiet-shadow-axfnflw6.neonauth.c-4.us-east-2.aws.neon.tech/neondb/auth';
+  // Use relative path '/auth' only for local dev proxy, otherwise use absolute URL to bypass Vercel proxy host header issues
+  const authBaseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+    ? '/auth' 
+    : neonAuthUrl;
 
   // Verify token and get session
   useEffect(() => {
