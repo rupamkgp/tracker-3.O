@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Build Web App
-        run: npm run build
+        run: npm run build &> build.log
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -31,7 +31,7 @@ jobs:
           java-version: '17'
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: npx cap sync android &> sync.log
           
       - name: Make Gradle Executable
         working-directory: ./android
@@ -39,9 +39,20 @@ jobs:
 
       - name: Build Debug APK
         working-directory: ./android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --stacktrace &> gradle.log
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-Logs
+          path: |
+            build.log
+            sync.log
+            android/gradle.log
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: StudyTracker-Debug.apk
